@@ -1,0 +1,21 @@
+<?xml version="1.0"?>
+<extension key="org.civicoop.dgw.corrections" type="module">
+  <file>corrections</file>
+  <name>CiviCRM corrections DGW</name>
+  <description>CiviCRM extensie voor eenmalige correctie scripts De Goede Woning</description>
+  <license>AGPL-3.0</license>
+  <maintainer>
+    <author>CiviCooP</author>
+    <email>helpdesk@civicoop.org</email>
+  </maintainer>
+  <releaseDate>2014-01-30</releaseDate>
+  <version>1.0</version>
+  <develStage>alpha</develStage>
+  <compatibility>
+    <ver>4.3.7</ver>
+  </compatibility>
+  <comments>Temporary extension for support</comments>
+  <civix>
+    <namespace>CRM/Corrections</namespace>
+  </civix>
+</extension>
