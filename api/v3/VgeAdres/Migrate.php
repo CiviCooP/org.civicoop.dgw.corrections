@@ -14,6 +14,7 @@ function civicrm_api3_vge_adres_migrate($params) {
   /*
    * Configuration part
    */
+  set_time_limit(0);
   $tables = array();
   $tables[0]['table'] = 'civicrm_value_huurovereenkomst_2';
   $tables[0]['end'] = 'einddatum_hov_10';

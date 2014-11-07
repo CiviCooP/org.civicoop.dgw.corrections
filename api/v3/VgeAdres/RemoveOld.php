@@ -11,10 +11,13 @@
  * @throws API_Exception
  */
 function civicrm_api3_vge_adres_removeold($params) {
+  
   /*
    * Configuration part
    */
+  set_time_limit(0);
   define('VGE_ADRES_LOCATION_TYPE_ID', 10);
+  
   $query = 'SELECT a.id, a.contact_id, b.contact_type FROM civicrm_address a '
     . 'JOIN civicrm_contact b on a.contact_id = b.id '
     . 'WHERE location_type_id = %1 AND contact_type = %2';
