@@ -75,7 +75,7 @@ function _householdHasMoreToo($contactId) {
     if ($countContact == 0) {
       $countOudParams = array(
         1 => array(6, "Integer"),
-        2 => array($contactId->id, "Integer")
+        2 => array($huishoudenId, "Integer")
       );
       $countOud = CRM_Core_DAO::singleValueQuery($addressQuery, $countOudParams);
       if ($countOud >= 2) {
