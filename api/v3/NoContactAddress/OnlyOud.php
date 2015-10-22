@@ -28,7 +28,8 @@ function civicrm_api3_no_contact_address_onlyoud($params) {
 
 
   $contactQuery = "SELECT cont.id, cont.contact_type, cont.display_name, aanv.persoonsnummer_first_1 AS pers_first
-FROM civicrm_contact cont LEFT JOIN civicrm_value_aanvullende_persoonsgegevens_1 aanv  ON cont.id = aanv.entity_id";
+FROM civicrm_contact cont LEFT JOIN civicrm_value_aanvullende_persoonsgegevens_1 aanv  ON cont.id = aanv.entity_id
+WHERE contact_type = 'Individual'";
   $daoContact = CRM_Core_DAO::executeQuery($contactQuery);
   while ($daoContact->fetch()) {
     $countAddressQuery = "SELECT COUNT(*) as countAddress FROM civicrm_address WHERE location_type_id = %1 AND contact_id = %2";
@@ -43,13 +44,46 @@ FROM civicrm_contact cont LEFT JOIN civicrm_value_aanvullende_persoonsgegevens_1
       );
       $countOud = CRM_Core_DAO::singleValueQuery($countAddressQuery, $countOudParams);
       if ($countOud >= 2) {
-        _addContact($daoContact);
+        if (_householdHasMoreToo($daoContact->id) == TRUE) {
+          _addContact($daoContact);
+        }
         $countFound++;
       }
     }
   }
-  $returnValues = array('is_error'=> 0, 'message' => 'Verwerking succesvol afgerond, '.$countFound.' contacten gevonden zonder contactadres met 2 of meer oude adressen.');
+  $returnValues = array('is_error'=> 0, 'message' => 'Verwerking succesvol afgerond, '.$countFound.' contacten gevonden zonder contactadres met 2 of meer oude adressen voor zowel persoon als huishouden.');
   return civicrm_api3_create_success($returnValues, $params, 'NoContactAddress', 'OnlyOud');
+}
+
+/**
+ * Function to check if huishouden has more than 2 also
+ *
+ * @param contactId
+ * @return bool
+ */
+function _householdHasMoreToo($contactId) {
+  $huishoudenId = CRM_Utils_DgwUtils::getHuishoudenHoofdhuurder($contactId);
+  if (empty($huishoudenId)) {
+    $huishoudenId = _getHuishoudenMedehuurder($contactId);
+  }
+  if ($huishoudenId) {
+    $addressQuery = "SELECT COUNT(*) as countAddress FROM civicrm_address WHERE location_type_id = %1 AND contact_id = %2";
+    $noContactParams = array(
+      1 => array(1, 'Integer'),
+      2 => array($huishoudenId, 'Integer'));
+    $countContact = CRM_Core_DAO::singleValueQuery($addressQuery, $noContactParams);
+    if ($countContact == 0) {
+      $countOudParams = array(
+        1 => array(6, "Integer"),
+        2 => array($contactId->id, "Integer")
+      );
+      $countOud = CRM_Core_DAO::singleValueQuery($addressQuery, $countOudParams);
+      if ($countOud >= 2) {
+      return TRUE;
+      }
+    }
+  }
+  return FALSE;
 }
 
 /**
@@ -107,3 +141,33 @@ VALUES(%1, %2, %3, %4, %5, %6)";
     CRM_Core_DAO::executeQuery($insertAddressQuery, $insertAddressParams);
   }
 }
+
+/**
+ * function to retrieve a houshouden id for a medehuurder
+ *
+ * @author Erik Hommel (erik.hommel@civicoop.org)
+ * @date 27 Jan 2014
+ * @param int $medehuurderId
+ * @return int|bool
+ */
+function _getHuishoudenMedehuurder($medehuurderId) {
+  $medehuurderLabel = CRM_Utils_DgwUtils::getDgwConfigValue('relatie medehuurder');
+  try {
+    $relType = civicrm_api3('RelationshipType', 'Getsingle', array('label_a_b' => $medehuurderLabel));
+    $relTypeId = $relType['id'];
+  } catch (CiviCRM_API3_Exception $e) {
+    return false;
+  }
+  $params = array(
+    'relationship_type_id' => $relTypeId,
+    'is_active' => 1,
+    'contact_id_a' => $medehuurderId
+  );
+  try {
+    $relations = civicrm_api3('Relationship', 'Getsingle', $params);
+    return $relations['contact_id_b'];
+  } catch (CiviCRM_API3_Exception $e) {
+    return false;
+  }
+}
+
