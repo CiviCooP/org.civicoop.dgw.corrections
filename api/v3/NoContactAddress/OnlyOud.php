@@ -66,7 +66,7 @@ function _householdHasMoreToo($contactId) {
   if (empty($huishoudenId)) {
     $huishoudenId = _getHuishoudenMedehuurder($contactId);
   }
-  if ($huishoudenId) {
+  if (!empty($huishoudenId)) {
     $addressQuery = "SELECT COUNT(*) as countAddress FROM civicrm_address WHERE location_type_id = %1 AND contact_id = %2";
     $noContactParams = array(
       1 => array(1, 'Integer'),
