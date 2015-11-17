@@ -139,7 +139,7 @@ function vge_adres_removevgehovended_hov_household($debug){
     $hoofdhuurders = CRM_Utils_DgwUtils::getHoofdhuurders($dao->id, false);
     foreach($hoofdhuurders as $hoofdhuurder){
       //$return['message'][] = ts('Next hoofdhuurder of household with id \'' . $dao->id . '\' the with id \'' . $hoofdhuurder['contact_id']);
-      echo ts('Next hoofdhuurder of household with id \'' . $dao->id . '\' the with id \'' . $hoofdhuurder['contact_id']);
+      echo ts('Next hoofdhuurder of household with id \'' . $dao->id . '\' the with id \'' . $hoofdhuurder['contact_id']) . '<br/>' . PHP_EOL;
       $addresses = CRM_Utils_DgwUtils::getAddress(['contact_id' => $hoofdhuurder['contact_id'], 'location_type_id' => $locationtype['id']], 'get');
       foreach($addresses['values'] as $address){
         // delete if household vge_adres_first_7 is the same as the hoofdhuurder street_address
@@ -157,7 +157,7 @@ function vge_adres_removevgehovended_hov_household($debug){
     $medehuurders = CRM_Utils_DgwUtils::getMedeHuurders($dao->id, false);
     foreach($medehuurders as $medehuurder){     
       //$return['message'][] = ts('Next medehuurder of household with id \'' . $dao->id . '\' the with id \'' . $medehuurder['medehuurder_id']);
-      echo ts('Next medehuurder of household with id \'' . $dao->id . '\' the with id \'' . $medehuurder['medehuurder_id']);
+      echo ts('Next medehuurder of household with id \'' . $dao->id . '\' the with id \'' . $medehuurder['medehuurder_id']) . '<br/>' . PHP_EOL;
       $addresses = CRM_Utils_DgwUtils::getAddress(['contact_id' => $medehuurder['medehuurder_id'], 'location_type_id' => $locationtype['id']], 'get');
       foreach($addresses['values'] as $address){
         // delete if household vge_adres_first_7 is the same as the medehuurder street_address
