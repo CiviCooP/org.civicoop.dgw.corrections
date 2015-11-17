@@ -109,6 +109,7 @@ function vge_adres_removevgehovended_hov_household($debug){
     
   while ($dao->fetch()) {    
     //$return['message'][] = ts('Next household with id \'' . $dao->id);
+    echo '<br/>' . PHP_EOL;
     echo ts('Next household with id \'' . $dao->id) . '<br/>' . PHP_EOL;
       
     /**
@@ -228,6 +229,7 @@ function vge_adres_removevgehovended_hov_organization($debug){
     
   while ($dao->fetch()) {
     //$return['message'][] = ts('Next organization with id \'' . $dao->id);
+    echo '<br/>' . PHP_EOL;
     echo ts('Next organization with id \'' . $dao->id) . '<br/>' . PHP_EOL;
     
     /**
