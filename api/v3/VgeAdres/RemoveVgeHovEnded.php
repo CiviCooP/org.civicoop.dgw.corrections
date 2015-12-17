@@ -63,7 +63,9 @@ function vge_adres_removevgehovended_hov_household($debug){
   $locationtype = CRM_Utils_DgwUtils::getLocationType(['name' => 'VGEadres'], 'getsingle');
   if(!$locationtype){
     $return['error_message'] = sprintf('Cannot get the location_type_id of the VGE adres');
-    echo sprintf('Cannot get the location_type_id of the VGE adres') . '<br/>' . PHP_EOL;
+    if($debug){
+      echo sprintf('Cannot get the location_type_id of the VGE adres') . '<br/>' . PHP_EOL;
+    }
     $return['is_error'] = true;
     return $return;
   }
@@ -71,7 +73,9 @@ function vge_adres_removevgehovended_hov_household($debug){
   $customgroup = CRM_Utils_DgwUtils::getCustomGroup(['name' => 'Huurovereenkomst (huishouden)'], 'getsingle'); 
   if(!$customgroup){
     $return['error_message'] = sprintf('Cannot get the custom_group_id of the Huurovereenkomst (huishouden)');
-    echo sprintf('Cannot get the custom_group_id of the Huurovereenkomst (huishouden)') . '<br/>' . PHP_EOL;
+    if($debug){
+      echo sprintf('Cannot get the custom_group_id of the Huurovereenkomst (huishouden)') . '<br/>' . PHP_EOL;
+    }
     $return['is_error'] = true;
     return $return;
   }
@@ -79,7 +83,9 @@ function vge_adres_removevgehovended_hov_household($debug){
   $customfield = CRM_Utils_DgwUtils::getCustomFieldAll(['custom_group_id' => $customgroup['id']]);  
   if(!$customfield){
     $return['error_message'] = sprintf('Cannot get all the custom fields of the Huurovereenkomst (huishouden)');
-    echo sprintf('Cannot get all the custom fields of the Huurovereenkomst (huishouden)') . '<br/>' . PHP_EOL;
+    if($debug){
+      echo sprintf('Cannot get all the custom fields of the Huurovereenkomst (huishouden)') . '<br/>' . PHP_EOL;
+    }
     $return['is_error'] = true;
     return $return;
   }
@@ -108,9 +114,11 @@ function vge_adres_removevgehovended_hov_household($debug){
   $dao = CRM_Core_DAO::executeQuery($query, $params);
     
   while ($dao->fetch()) {    
-    //$return['message'][] = ts('Next household with id \'' . $dao->id);
-    echo '<br/>' . PHP_EOL;
-    echo ts('Next household with id \'' . $dao->id . '\'') . '<br/>' . PHP_EOL;
+    $return['message'][] = ts('Next household with id \'' . $dao->id);
+    if($debug){
+      echo '<br/>' . PHP_EOL;
+      echo ts('Next household with id \'' . $dao->id . '\'') . '<br/>' . PHP_EOL;
+    }
       
     /**
      * Sometimes the address of the HOV is like Adriaan Pauwstraat,15,7331 NH,Apeldoorn
@@ -129,7 +137,9 @@ function vge_adres_removevgehovended_hov_household($debug){
       // delete if household vge_adres_first_7 is the same as the hoofdhuurder street_address
       if($vge_adres == $address['street_address']){
         $return['message'][] = ts('Household with id \'' . $dao->id . '\', the address with street address \'' . $address['street_address'] . '\' with address id \'' . $address['id'] . '\', the address is deleted !');
-        echo ts('Household with id \'' . $dao->id . '\', the address with street address \'' . $address['street_address'] . '\' with address id \'' . $address['id'] . '\', the address is deleted !') . '<br/>' . PHP_EOL;
+        if($debug){
+          echo ts('Household with id \'' . $dao->id . '\', the address with street address \'' . $address['street_address'] . '\' with address id \'' . $address['id'] . '\', the address is deleted !') . '<br/>' . PHP_EOL;
+        }
         if(!$debug){
           CRM_Utils_DgwUtils::deleteAddress($address['id']);
         }
@@ -139,14 +149,18 @@ function vge_adres_removevgehovended_hov_household($debug){
     // get hoofdhuurders
     $hoofdhuurders = CRM_Utils_DgwUtils::getHoofdhuurders($dao->id, false);
     foreach($hoofdhuurders as $hoofdhuurder){
-      //$return['message'][] = ts('Next hoofdhuurder of household with id \'' . $dao->id . '\' the with id \'' . $hoofdhuurder['contact_id']);
-      echo ts('Next hoofdhuurder of household with id \'' . $dao->id . '\' the with id \'' . $hoofdhuurder['contact_id'] . '\'') . '<br/>' . PHP_EOL;
+      $return['message'][] = ts('Next hoofdhuurder of household with id \'' . $dao->id . '\' the with id \'' . $hoofdhuurder['contact_id']);
+      if($debug){
+        echo ts('Next hoofdhuurder of household with id \'' . $dao->id . '\' the with id \'' . $hoofdhuurder['contact_id'] . '\'') . '<br/>' . PHP_EOL;
+      }
       $addresses = CRM_Utils_DgwUtils::getAddress(['contact_id' => $hoofdhuurder['contact_id'], 'location_type_id' => $locationtype['id']], 'get');
       foreach($addresses['values'] as $address){
         // delete if household vge_adres_first_7 is the same as the hoofdhuurder street_address
         if($vge_adres == $address['street_address']){
           $return['message'][] = ts('Household with id \'' . $dao->id . '\', there the hoofdhuurder with id \'' . $hoofdhuurder['contact_id'] . '\' the address with street address \'' . $address['street_address'] . '\' with address id \'' . $address['id'] . '\', the address is deleted !');
-          echo ts('Household with id \'' . $dao->id . '\', there the hoofdhuurder with id \'' . $hoofdhuurder['contact_id'] . '\' the address with street address \'' . $address['street_address'] . '\' with address id \'' . $address['id'] . '\', the address is deleted !') . '<br/>' . PHP_EOL;
+          if($debug){
+            echo ts('Household with id \'' . $dao->id . '\', there the hoofdhuurder with id \'' . $hoofdhuurder['contact_id'] . '\' the address with street address \'' . $address['street_address'] . '\' with address id \'' . $address['id'] . '\', the address is deleted !') . '<br/>' . PHP_EOL;
+          }
           if(!$debug){
             CRM_Utils_DgwUtils::deleteAddress($address['id']);
           }
@@ -157,14 +171,18 @@ function vge_adres_removevgehovended_hov_household($debug){
     // get medehuurders
     $medehuurders = CRM_Utils_DgwUtils::getMedeHuurders($dao->id, false);
     foreach($medehuurders as $medehuurder){     
-      //$return['message'][] = ts('Next medehuurder of household with id \'' . $dao->id . '\' the with id \'' . $medehuurder['medehuurder_id']);
-      echo ts('Next medehuurder of household with id \'' . $dao->id . '\' the with id \'' . $medehuurder['medehuurder_id'] . '\'') . '<br/>' . PHP_EOL;
+      $return['message'][] = ts('Next medehuurder of household with id \'' . $dao->id . '\' the with id \'' . $medehuurder['medehuurder_id']);
+      if($debug){
+        echo ts('Next medehuurder of household with id \'' . $dao->id . '\' the with id \'' . $medehuurder['medehuurder_id'] . '\'') . '<br/>' . PHP_EOL;
+      }
       $addresses = CRM_Utils_DgwUtils::getAddress(['contact_id' => $medehuurder['medehuurder_id'], 'location_type_id' => $locationtype['id']], 'get');
       foreach($addresses['values'] as $address){
         // delete if household vge_adres_first_7 is the same as the medehuurder street_address
         if($vge_adres == $address['street_address']){
           $return['message'][] = ts('Household with id \'' . $dao->id . '\', there the medehuurder with id \'' . $medehuurder['medehuurder_id'] . '\' the address with street address \'' . $address['street_address'] . '\' with address id \'' . $address['id'] . '\', the address is deleted !');
-          echo ts('Household with id \'' . $dao->id . '\', there the medehuurder with id \'' . $medehuurder['medehuurder_id'] . '\' the address with street address \'' . $address['street_address'] . '\' with address id \'' . $address['id'] . '\', the address is deleted !') . '<br/>' . PHP_EOL;
+          if($debug){
+            echo ts('Household with id \'' . $dao->id . '\', there the medehuurder with id \'' . $medehuurder['medehuurder_id'] . '\' the address with street address \'' . $address['street_address'] . '\' with address id \'' . $address['id'] . '\', the address is deleted !') . '<br/>' . PHP_EOL;
+          }
           if(!$debug){
             CRM_Utils_DgwUtils::deleteAddress($address['id']);
           }
@@ -183,7 +201,9 @@ function vge_adres_removevgehovended_hov_organization($debug){
   $locationtype = CRM_Utils_DgwUtils::getLocationType(['name' => 'VGEadres'], 'getsingle');
   if(!$locationtype){
     $return['error_message'] = sprintf('Cannot get the location_type_id of the VGE adres');
-    echo sprintf('Cannot get the location_type_id of the VGE adres') . '<br/>' . PHP_EOL;
+    if($debug){
+      echo sprintf('Cannot get the location_type_id of the VGE adres') . '<br/>' . PHP_EOL;
+    }
     $return['is_error'] = true;
     return $return;
   }
@@ -191,7 +211,9 @@ function vge_adres_removevgehovended_hov_organization($debug){
   $customgroup = CRM_Utils_DgwUtils::getCustomGroup(['name' => 'Huurovereenkomst (organisatie)'], 'getsingle'); 
   if(!$customgroup){
     $return['error_message'] = sprintf('Cannot get the custom_group_id of the Huurovereenkomst (organistatie)');
-    echo sprintf('Cannot get the custom_group_id of the Huurovereenkomst (organistatie)') . '<br/>' . PHP_EOL;
+    if($debug){
+      echo sprintf('Cannot get the custom_group_id of the Huurovereenkomst (organistatie)') . '<br/>' . PHP_EOL;
+    }
     $return['is_error'] = true;
     return $return;
   }
@@ -199,7 +221,9 @@ function vge_adres_removevgehovended_hov_organization($debug){
   $customfield = CRM_Utils_DgwUtils::getCustomFieldAll(['custom_group_id' => $customgroup['id']]);
   if(!$customfield){
     $return['error_message'] = sprintf('Cannot get all the custom fields of the Huurovereenkomst (organistatie)');
-    echo sprintf('Cannot get all the custom fields of the Huurovereenkomst (organistatie)') . '<br/>' . PHP_EOL;
+    if($debug){
+      echo sprintf('Cannot get all the custom fields of the Huurovereenkomst (organistatie)') . '<br/>' . PHP_EOL;
+    }
     $return['is_error'] = true;
     return $return;
   }
@@ -228,9 +252,11 @@ function vge_adres_removevgehovended_hov_organization($debug){
   $dao = CRM_Core_DAO::executeQuery($query, $params);
     
   while ($dao->fetch()) {
-    //$return['message'][] = ts('Next organization with id \'' . $dao->id);
-    echo '<br/>' . PHP_EOL;
-    echo ts('Next organization with id \'' . $dao->id . '\'') . '<br/>' . PHP_EOL;
+    $return['message'][] = ts('Next organization with id \'' . $dao->id);
+    if($debug){
+      echo '<br/>' . PHP_EOL;
+      echo ts('Next organization with id \'' . $dao->id . '\'') . '<br/>' . PHP_EOL;
+    }
     
     /**
      * Sometimes the address of the HOV is like Adriaan Pauwstraat,15,7331 NH,Apeldoorn
@@ -249,7 +275,9 @@ function vge_adres_removevgehovended_hov_organization($debug){
       // delete if household vge_adres_first_7 is the same as the hoofdhuurder street_address
       if($vge_adres[0] == $address['street_address']){
         $return['message'][] = ts('Organization with id \'' . $dao->id . '\', the address with street address \'' . $address['street_address'] . '\' with address id \'' . $address['id'] . '\', the address is deleted !');
-        echo ts('Organization with id \'' . $dao->id . '\', the address with street address \'' . $address['street_address'] . '\' with address id \'' . $address['id'] . '\', the address is deleted !') . '<br/>' . PHP_EOL;
+        if($debug){
+          echo ts('Organization with id \'' . $dao->id . '\', the address with street address \'' . $address['street_address'] . '\' with address id \'' . $address['id'] . '\', the address is deleted !') . '<br/>' . PHP_EOL;
+        }
         if(!$debug){
           CRM_Utils_DgwUtils::deleteAddress($address['id']);
         }
