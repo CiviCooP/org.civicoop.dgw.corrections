@@ -45,9 +45,9 @@ WHERE contact_type = 'Individual'";
       $countOud = CRM_Core_DAO::singleValueQuery($countAddressQuery, $countOudParams);
       if ($countOud >= 2) {
         if (_householdHasMoreToo($daoContact->id) == TRUE) {
+          $countFound++;
           _addContact($daoContact);
         }
-        $countFound++;
       }
     }
   }
